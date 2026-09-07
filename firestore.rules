@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isStaff() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['mentor', 'coordinator', 'incubator', 'vendor', 'partner', 'admin'];
+    }
+
+    match /users/{userId} {
+      allow create: if isOwner(userId)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.role == 'student'
+        && request.resource.data.requestedRole in ['student', 'mentor', 'incubator'];
+      allow read: if isOwner(userId) || isStaff();
+      allow update: if (isOwner(userId)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.role == resource.data.role)
+        || isStaff();
+      allow delete: if isOwner(userId) || isStaff();
+    }
+
+    match /ideas/{ideaId} {
+      allow create: if signedIn() && request.resource.data.studentId == request.auth.uid;
+      allow read, delete: if signedIn()
+        && (resource.data.studentId == request.auth.uid || isStaff());
+      allow update: if (signedIn()
+        && resource.data.studentId == request.auth.uid
+        && request.resource.data.studentId == resource.data.studentId)
+        || isStaff();
+    }
+
+    match /notifications/{notificationId} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, delete: if signedIn()
+        && (resource.data.userId == request.auth.uid || isStaff());
+      allow update: if (signedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId)
+        || isStaff();
+    }
+  }
+}

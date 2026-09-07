@@ -1,0 +1,10 @@
+import { useEffect, useState } from "react";
+import { collection, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
+import { db } from "../services/firebase";
+
+export default function IncubationBoard() {
+  const [ideas, setIdeas] = useState([]);
+  useEffect(() => { getDocs(query(collection(db, "ideas"), where("mentorStatus", "==", "approved"))).then((snapshot) => setIdeas(snapshot.docs.map((item) => ({ id: item.id, ...item.data() })))); }, []);
+  const updateStatus = async (id, incubationStatus) => { await updateDoc(doc(db, "ideas", id), { incubationStatus, updatedAt: new Date().toISOString() }); setIdeas((current) => current.map((idea) => idea.id === id ? { ...idea, incubationStatus } : idea)); };
+  return <div className="min-h-screen bg-slate-950 text-white p-8"><p className="text-emerald-400 text-xs uppercase tracking-[.2em]">Incubation operations</p><h1 className="text-5xl font-serif mt-4 mb-3">Move the strongest ideas forward.</h1><p className="text-slate-400 mb-10">Track mentor-approved ventures and their next incubation decision.</p><div className="grid gap-4 max-w-5xl">{ideas.length ? ideas.map((idea) => <article className="bg-slate-900 border border-slate-800 p-6 flex justify-between gap-5 items-center" key={idea.id}><div><span className="text-slate-500 text-xs">READINESS {idea.scores?.overallReadiness || 0}</span><h2 className="text-2xl font-serif mt-3">{idea.basics?.rawIdea || idea.basics?.title || "Untitled startup"}</h2></div><select className="bg-slate-800 p-3" value={idea.incubationStatus || "not_recommended"} onChange={(event) => updateStatus(idea.id, event.target.value)}><option value="not_recommended">Not decided</option><option value="shortlisted">Shortlisted</option><option value="accepted">Accepted</option><option value="declined">Declined</option></select></article>) : <p className="text-slate-400">No mentor-approved ideas are ready for incubation.</p>}</div></div>;
+}
