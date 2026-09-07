@@ -56,6 +56,31 @@
   }
 }
 
+.vp-login-stage { position: relative; isolation: isolate; overflow: hidden; background: #f7f4ee; background-image: radial-gradient(circle at 15% 10%, rgba(123,223,242,.2), transparent 22rem), radial-gradient(circle at 90% 92%, rgba(239,131,84,.12), transparent 25rem), linear-gradient(rgba(16,42,67,.028) 1px, transparent 1px), linear-gradient(90deg, rgba(16,42,67,.022) 1px, transparent 1px); background-size: auto, auto, 28px 28px, 28px 28px; }
+.vp-login-stage::before { content: ""; position: absolute; inset: 7% 8%; border: 1px solid rgba(23,107,135,.12); border-radius: 32px; pointer-events: none; }
+.vp-login-frame { position: relative; z-index: 1; animation: vp-login-arrive .9s cubic-bezier(.2,.8,.2,1) both; }
+.vp-login-hero { background: radial-gradient(circle at 82% 20%, rgba(123,223,242,.22), transparent 15rem), linear-gradient(145deg, #12344d 0%, #176b87 58%, #0e526c 100%); }
+.vp-login-glow { position: absolute; border-radius: 999px; filter: blur(2px); pointer-events: none; }
+.vp-login-glow-one { width: 210px; height: 210px; top: 22%; right: 13%; background: rgba(246,200,95,.16); box-shadow: 0 0 90px 35px rgba(246,200,95,.1); animation: vp-login-pulse 6s ease-in-out infinite; }
+.vp-login-glow-two { width: 8px; height: 8px; top: 28%; right: 30%; background: #f6c85f; box-shadow: 0 0 25px 8px rgba(246,200,95,.55); animation: vp-login-drift 5s ease-in-out infinite; }
+.vp-login-orbit { position: absolute; border: 1px solid rgba(123,223,242,.28); border-radius: 50%; pointer-events: none; transform: rotate(-22deg); }
+.vp-login-orbit-one { width: 430px; height: 190px; top: 11%; right: -130px; animation: vp-login-orbit 18s linear infinite; }
+.vp-login-orbit-two { width: 320px; height: 140px; top: 19%; right: -85px; opacity: .7; animation: vp-login-orbit 13s linear infinite reverse; }
+.vp-login-signal { position: absolute; top: 36px; right: 48px; color: rgba(231,243,247,.6); font: 700 9px/1 "Trebuchet MS", sans-serif; letter-spacing: .2em; }
+.vp-login-journey > div { position: relative; }
+.vp-login-journey > div::after { content: ""; position: absolute; top: 2px; right: -7px; width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.5); }
+.vp-login-journey > div:last-child::after { display: none; }
+.vp-login-quote { animation: vp-login-quote 1.2s .45s ease both; }
+.vp-login-live { display: inline-flex; align-items: center; gap: 6px; color: #627d98; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.vp-login-live i { width: 6px; height: 6px; border-radius: 50%; background: #42a66b; box-shadow: 0 0 0 4px rgba(66,166,107,.12); }
+@keyframes vp-login-arrive { from { opacity: 0; transform: translateY(18px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes vp-login-pulse { 0%, 100% { transform: scale(.92); opacity: .65; } 50% { transform: scale(1.08); opacity: 1; } }
+@keyframes vp-login-drift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-22px, 18px); } }
+@keyframes vp-login-orbit { to { transform: rotate(338deg); } }
+@keyframes vp-login-quote { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .vp-login-frame, .vp-login-glow-one, .vp-login-glow-two, .vp-login-orbit, .vp-login-quote { animation: none; } }
+@media (max-width: 640px) { .vp-login-stage { padding: 16px; } .vp-login-stage::before { inset: 2%; } .vp-login-live { display: none; } }
+
 #center {
   display: flex;
   flex-direction: column;
